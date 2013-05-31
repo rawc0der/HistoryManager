@@ -56,7 +56,7 @@ define([
 				var direction = (visitedEntryIndex < this.activeIndex) ? 'Back' : 'Forward';
 				this.previousIndex = this.activeIndex;
 				this.activeIndex = visitedEntryIndex;
-				console.log('%c HistoryManager::: navigateToEntry ', 'color:purple', this.getActiveEntryName() );
+				console.log('%c HistoryManager::: navigateToEntry ', 'color:purple', this.getActiveEntry() );
 				this['go'+direction]();
 				// console.log(this);
 			}
@@ -72,7 +72,7 @@ define([
 				// console.log('%c HistoryManager::: goToIndex', 'color: green', index)
 				this.previousIndex = this.activeIndex;
 				this.activeIndex = index;
-				// console.log('Current path: ', this.getActiveEntryName() );
+				// console.log('Current path: ', this.getActiveEntry() );
 			}
 		},
 		/**
@@ -105,28 +105,28 @@ define([
 		/**
 		 *	Get the route path name of the current Active entry 
 		 */
-		getActiveEntryName: function(){
+		getActiveEntry: function(){
 			// console.log('%c HistoryManager::: getActiveEntry', 'color: green')
 			return this.historyStack[ this.activeIndex ];
 		},
 		/**
 		 *	Get the route path name of the last Visited entry 
 		 */
-		getLastVisitedEntryName: function(){
+		getLastVisitedEntry: function(){
 			// console.log('%c HistoryManager::: getLastVisitedEntry', 'color: green')
 			return this.historyStack[ this.previousIndex ];
 		},
 		/**
 		 *	Get the Name of the entry one index lower than the current activeIndex
 		 */
-		getPreviousEntryName: function(){
+		getPreviousEntry: function(){
 			// console.log('%c HistoryManager::: getPreviousEntry', 'color: green')
 			return this.historyStack[ this.activeIndex - 1 ];
 		},
 		/**
 		 *	Get the Name of the entry one index higher than the current activeIndex
 		 */
-		getNextEntryName: function(){
+		getNextEntry: function(){
 			// console.log('%c HistoryManager::: getNextEntry', 'color: green')
 			return this.historyStack[ this.activeIndex + 1 ];
 		},
@@ -135,9 +135,7 @@ define([
 		 */
 		clearTail: function(){
 			// console.log('%c HistoryManager::: clearTail', 'color: green')
-			this.historyStack.splice( this.activeIndex + 1, this.historyStack.length 
-				)
-
+			this.historyStack.splice( this.activeIndex + 1, this.historyStack.length );
 		},
 		/**
 		 *	Get the index from historyStack Array if the routePathName 
