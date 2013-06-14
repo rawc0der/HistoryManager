@@ -1,9 +1,9 @@
 define([
- 'underscore', 
- 'backbone'
+ // 'underscore', 
+ // 'backbone'
 
 
-], function(_, Backbone){
+], function(){
 	/**
 	 * History Object responsible for holding navigation entries.
 	 * @Array historyStack - array container, holding route path names
@@ -17,24 +17,32 @@ define([
 		this.start();
 	}
 
-	_.extend( HistoryManager.prototype, {
+	HistoryManager.prototype = {
 		/**
 		 *  Set the first index in the historyStack with the
 		 *  first route path. 
-		 *  @TODO - must provide another way to bind to route changes
+		 *  @TODO - Add a max routes limit parameter, and a refresh mechanism
 		 */
 		start: function(){
 			console.log('%c HistoryManager::: start', 'color: blue', this)
 			var firstEntry = window.location.href.replace( window.location.origin, '' )
 			this.historyStack[0] = firstEntry;
 			this.activeIndex = 0;
-			////////////connect with routeDispatcher/////////////////
+			this.setup();
+			
+		},
+		/**
+		 * Set a global object as the observer for navigation event 
+		 *  - connect with routeDispatcher -
+		 * Use this method or call method navigateToEntry() directly
+		 */
+		setup: function(){
 			window.historyManager = this;
 			var historyManager = this;
 			window.historyObserver.on('navigate', function(route){
 				historyManager.navigateToEntry( route );
 			});
-			///////////end////////////////
+
 		},
 		/**
 		 *	Navigate to a new root and add it to the historyStack if 
@@ -47,7 +55,7 @@ define([
 		navigateToEntry: function( entry ){
 			// console.log('%c HistoryManager::: navigateToEntry', 'color: green')
 			var visitedEntryIndex = this.find( entry );
-			if( visitedEntryIndex === -1 ) {  
+			if ( visitedEntryIndex === -1 ) {  
 				// stateless request (new Route)
 				this.addNewEntry(entry);
 				this.goForward();
@@ -56,9 +64,9 @@ define([
 				var direction = (visitedEntryIndex < this.activeIndex) ? 'Back' : 'Forward';
 				this.previousIndex = this.activeIndex;
 				this.activeIndex = visitedEntryIndex;
-				console.log('%c HistoryManager::: navigateToEntry ', 'color:purple', this.getActiveEntry() );
 				this['go'+direction]();
-				// console.log(this);
+				console.log('%c HistoryManager::: navigateToEntry ', 'color:purple', this.getActiveEntry() );
+				console.log(this);
 			}
 		},
 		/**
@@ -100,7 +108,6 @@ define([
 			this.historyStack.push( routePathName );
 			this.previousIndex = this.activeIndex;
 			this.activeIndex = this.historyStack.length -1;
-			// console.log(this)
 		},
 		/**
 		 *	Get the route path name of the current Active entry 
@@ -143,18 +150,20 @@ define([
 		 */
 		find: function( routePathName ){
 			var atIndex = -1;
-			_.map( this.historyStack , function( entry, key ){
-				if ( entry === routePathName ) {
-					atIndex = key;
-				} 
-			}, this)
+			var i, 
+			len = this.historyStack.length;
+			for (i = 0; i < len; i++){
+				if ( this.historyStack[i] === routePathName ) {
+					atIndex = i;
+				}
+			}
 			// console.log('%c HistoryManager::: find', 'color: green', atIndex)
 			return atIndex;
 		}
 
 
 
-	}); // end extend
+	}; // end extend
 
 	return HistoryManager;
 
